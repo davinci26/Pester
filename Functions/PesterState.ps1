@@ -57,12 +57,13 @@ function New-PesterState {
         $script:TestResult = @()
 
         $script:TotalCount = 0
-        $script:Time = [timespan]0
+        $script:Time = [timespan] 0
         $script:PassedCount = 0
         $script:FailedCount = 0
         $script:SkippedCount = 0
         $script:PendingCount = 0
         $script:InconclusiveCount = 0
+        $script:UserLogs = @()
 
         $script:IncludeVSCodeMarker = $PesterOption.IncludeVSCodeMarker
         $script:TestSuiteName = $PesterOption.TestSuiteName
@@ -94,6 +95,7 @@ function New-PesterState {
                 SkippedCount      = 0
                 PendingCount      = 0
                 InconclusiveCount = 0
+                UserMessages      = @()
             }
         }
 

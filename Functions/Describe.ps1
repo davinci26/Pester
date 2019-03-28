@@ -167,6 +167,31 @@ function DescribeImpl {
         & $DescribeOutputBlock $Name $CommandUsed
     }
 
+    # Write-Host 'I was here'
+    # Write-Host $sessionState.Scripts
+    # Write-Host $Pester
+    # Write-Host $Pester.TestGroups
+    # $TemporaryScriptBlock = 'Write-Host "Amazing"'
+    # $ScriptBlockInput = [ScriptBlock]::Create($TemporaryScriptBlock + $Pester.CurrentTestGroup.BeforeAll.ToString())
+    # $Pester.CurrentTestGroup.BeforeAll = $ScriptBlockInput
+    function Write-HostMock () {
+        $P = $Pester
+        {
+            ${Write-Host} = & (Pester\SafeGetCommand) -Name Write-Host -Module Microsoft.PowerShell.Utility -CommandType Cmdlet
+            & ${Write-Host} 'I was inside the mock'
+            & ${Write-Host} $P
+            & ${Write-Host} $Object
+
+        }.GetNewClosure()
+    }
+    # Mock Write-Host {
+    #     ${Write-Host} = & (Pester\SafeGetCommand) -Name Write-Host -Module Microsoft.PowerShell.Utility -CommandType Cmdlet
+    #     ${Get Variable Command} = & (Pester\SafeGetCommand) -Name Get-Variable -Module Microsoft.PowerShell.Utility -CommandType Cmdlet
+    #     & ${Write-Host} ${mock call state}['InputObjects']
+    #     & ${Write-Host} $Object #-NoNewline $NoNewline -Separator $Separator -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
+    # }
+
+    Mock Write-Host -MockWith (& Write-HostMock)
     $testDriveAdded = $false
     $testRegistryAdded = $false
     try {
