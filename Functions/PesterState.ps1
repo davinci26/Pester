@@ -95,7 +95,7 @@ function New-PesterState {
                 SkippedCount      = 0
                 PendingCount      = 0
                 InconclusiveCount = 0
-                UserMessages      = @()
+                UserMessages      = [System.Collections.ArrayList]@()
             }
         }
 
@@ -107,14 +107,15 @@ function New-PesterState {
             $newGroup = New-TestGroup @PSBoundParameters
             $newGroup.StartTime = $script:Stopwatch.Elapsed
             $null = $script:TestGroupStack.Peek().Actions.Add($newGroup)
-
+            Write-Host 'Entering the test group'
             $script:TestGroupStack.Push($newGroup)
         }
 
         function LeaveTestGroup([string] $Name, [string] $Hint) {
             $StopTime = $script:Stopwatch.Elapsed
             $currentGroup = $script:TestGroupStack.Pop()
-
+            Write-Host $currentGroup.UserMessages
+            Write-Host 'Leaving the test group'
             if ( $Hint -eq 'Script' ) {
                 $script:Time += $StopTime - $currentGroup.StartTime
             }
